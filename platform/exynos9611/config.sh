@@ -15,7 +15,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-# Platform configuration file for Samsung Exynos 2100 devices (exynos2100)
+# Platform configuration file for Samsung Exynos 9611 devices (exynos9611)
 TARGET_BOARD_API_LEVEL=29
 TARGET_PRODUCT_SHIPPING_API_LEVEL=33
 TARGET_VNDK_VERSION=33
