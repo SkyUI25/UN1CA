@@ -1,262 +1,132 @@
-if [ ! "$(GET_PROP "system" "ro.unica.version")" ]; then
-    SET_PROP "system" "ro.unica.version" "$ROM_VERSION"
-fi
-
-SMALI_PATCH "system" "system/framework/framework.jar" \
-    "smali/android/app/Instrumentation.smali" "replace" \
-    'newApplication(Ljava/lang/Class;Landroid/content/Context;)Landroid/app/Application;' \
-    'invoke-virtual {p0, p1}, Landroid/app/Application;->attach(Landroid/content/Context;)V' \
-    '    invoke-virtual {p0, p1}, Landroid/app/Application;->attach(Landroid/content/Context;)V\n\n    invoke-static {p1}, Lio/mesalabs/unica/SamsungPropsHooks;->init(Landroid/content/Context;)V' \
-    > /dev/null
-SMALI_PATCH "system" "system/framework/framework.jar" \
-    "smali/android/app/Instrumentation.smali" "replace" \
-    'newApplication(Ljava/lang/ClassLoader;Ljava/lang/String;Landroid/content/Context;)Landroid/app/Application;' \
-    'invoke-virtual {p0, p3}, Landroid/app/Application;->attach(Landroid/content/Context;)V' \
-    '    invoke-virtual {p0, p3}, Landroid/app/Application;->attach(Landroid/content/Context;)V\n\n    invoke-static {p3}, Lio/mesalabs/unica/SamsungPropsHooks;->init(Landroid/content/Context;)V' \
-    > /dev/null
+LOG_STEP_IN "- Enabling BSOH in SecSettings"
 
 DECODE_APK "system" "system/priv-app/SecSettings/SecSettings.apk"
 
-# Disable stock OTA references
-if [ ! -f "$WORK_DIR/system/system/priv-app/ChoiDujour/ChoiDujour.apk" ]; then
-    SMALI_PATCH "system" "system/priv-app/SecSettings/SecSettings.apk" \
-        "smali_classes3/com/samsung/android/settings/softwareupdate/SoftwareUpdateUtils.smali" "return" \
-        'isOTAUpgradeAllowed(Landroid/content/Context;)Z' \
-        'false'
-fi
-
-# Always show One UI minor version
-SMALI_PATCH "system" "system/priv-app/SecSettings/SecSettings.apk" \
-    "smali_classes4/com/samsung/android/settings/deviceinfo/softwareinfo/OneUIVersionPreferenceController.smali" "replace" \
-    'isDeviceWithMicroVersion()Z' \
-    'move-result p0' \
-    'const/4 p0, 0x1'
-
-# Show real device model number
-SMALI_PATCH "system" "system/priv-app/SecSettings/SecSettings.apk" \
-    "smali_classes4/com/samsung/android/settings/deviceinfo/aboutphone/ModelNameGetter.smali" "replace" \
-    'getModelName()Ljava/lang/String;' \
-    'ro.product.model' \
-    'ro.boot.em.model'
-
-LOG_STEP_IN "- Adding UN1CA Settings"
-
-# Dynamically patch SecSettings
-# - Add missing/non-xml files in place
-# - Patch existing files
-#   - Use the first line of the file to tell sed how to apply the rest of the content
-#   - Exception made for files under *res/values* where the "resources" tag gets nuked
-while IFS= read -r f; do
-    f="${f//$MODPATH\/SecSettings.apk\//}"
-
-    if [ ! -f "$APKTOOL_DIR/system/priv-app/SecSettings/SecSettings.apk/$f" ] || \
-            [[ "$f" != *".xml" ]]; then
-        LOG "- Adding \"$f\" to /system/system/priv-app/SecSettings.apk"
-        EVAL "mkdir -p \"$(dirname "$APKTOOL_DIR/system/priv-app/SecSettings/SecSettings.apk/$f")\""
-        EVAL "cp -a \"$MODPATH/SecSettings.apk/${f//\$/\\$}\" \"$APKTOOL_DIR/system/priv-app/SecSettings/SecSettings.apk/${f//\$/\\$}\""
-    else
-        LOG "- Patching \"$f\" in /system/system/priv-app/SecSettings.apk"
-        if [[ "$f" == *"res/values"* ]]; then
-            PATCH_INST="/<\/resources>/i"
-            CONTENT="$(sed -e "/?xml/d" -e "/resources>/d" "$MODPATH/SecSettings.apk/$f")"
-        else
-            PATCH_INST="$(head -n 1 "$MODPATH/SecSettings.apk/$f")"
-            CONTENT="$(tail -n +2 "$MODPATH/SecSettings.apk/$f")"
-        fi
-        CONTENT="$(sed -e "s/\"/\\\\\"/g" -e "s/\\$/\\\\$/g" -e "s/ /\\\ /g" -e "s/\\\\n/\\\\\\\\\n/g" <<< "$CONTENT")"
-        CONTENT="$(sed -E ':a;N;$!ba;s/\r{0,1}\n/\\n/g' <<< "$CONTENT")"
-        EVAL "sed -i \"$PATCH_INST $CONTENT\" \"$APKTOOL_DIR/system/priv-app/SecSettings/SecSettings.apk/$f\""
-    fi
-done < <(find "$MODPATH/SecSettings.apk" -type f)
-
-# Mark UN1CA Settings fragments as "valid"
-LOG "- Patching \"smali_classes2/com/android/settings/core/gateway/SettingsGateway.smali\" in /system/system/priv-app/SecSettings.apk"
-SMALI_PATCH "system" "system/priv-app/SecSettings/SecSettings.apk" \
-    "smali_classes2/com/android/settings/core/gateway/SettingsGateway.smali" "replace" \
-    '<clinit>()V' \
-    'filled-new-array/range {v1 .. v159}, [Ljava/lang/String;' \
-    '    const-string v160, "io.mesalabs.unica.settings.UnicaSettingsFragment"\n\n    filled-new-array/range {v1 .. v160}, [Ljava/lang/String;' \
-    > /dev/null
-SMALI_PATCH "system" "system/priv-app/SecSettings/SecSettings.apk" \
-    "smali_classes2/com/android/settings/core/gateway/SettingsGateway.smali" "replace" \
-    '<clinit>()V' \
-    'filled-new-array/range {v1 .. v160}, [Ljava/lang/String;' \
-    '    const-string v161, "io.mesalabs.unica.settings.extra.ExtraSettingsFragment"\n\n    filled-new-array/range {v1 .. v161}, [Ljava/lang/String;' \
-    > /dev/null
-SMALI_PATCH "system" "system/priv-app/SecSettings/SecSettings.apk" \
-    "smali_classes2/com/android/settings/core/gateway/SettingsGateway.smali" "replace" \
-    '<clinit>()V' \
-    'filled-new-array/range {v1 .. v161}, [Ljava/lang/String;' \
-    '    const-string v162, "io.mesalabs.unica.settings.hma.HideMyApplistFragment"\n\n    filled-new-array/range {v1 .. v162}, [Ljava/lang/String;' \
-    > /dev/null
-SMALI_PATCH "system" "system/priv-app/SecSettings/SecSettings.apk" \
-    "smali_classes2/com/android/settings/core/gateway/SettingsGateway.smali" "replace" \
-    '<clinit>()V' \
-    'filled-new-array/range {v1 .. v162}, [Ljava/lang/String;' \
-    '    const-string v163, "io.mesalabs.unica.settings.spoof.HideDeveloperStatusFragment"\n\n    filled-new-array/range {v1 .. v163}, [Ljava/lang/String;' \
-    > /dev/null
-SMALI_PATCH "system" "system/priv-app/SecSettings/SecSettings.apk" \
-    "smali_classes2/com/android/settings/core/gateway/SettingsGateway.smali" "replace" \
-    '<clinit>()V' \
-    'filled-new-array/range {v1 .. v163}, [Ljava/lang/String;' \
-    '    const-string v164, "io.mesalabs.unica.settings.spoof.SpoofSettingsFragment"\n\n    filled-new-array/range {v1 .. v164}, [Ljava/lang/String;' \
-    > /dev/null
-SMALI_PATCH "system" "system/priv-app/SecSettings/SecSettings.apk" \
-    "smali_classes2/com/android/settings/core/gateway/SettingsGateway.smali" "replace" \
-    '<clinit>()V' \
-    'filled-new-array/range {v1 .. v164}, [Ljava/lang/String;' \
-    '    const-string v165, "io.mesalabs.unica.settings.ui.UISettingsFragment"\n\n    filled-new-array/range {v1 .. v165}, [Ljava/lang/String;' \
-    > /dev/null
-LOG "- Patching \"smali_classes2/com/android/settings/SettingsActivity.smali\" in /system/system/priv-app/SecSettings.apk"
-SMALI_PATCH "system" "system/priv-app/SecSettings/SecSettings.apk" \
-    "smali_classes2/com/android/settings/SettingsActivity.smali" "replace" \
-    'isValidFragment(Ljava/lang/String;)Z' \
-    'const/16 v2, 0x9f' \
-    'const/16 v2, 0xa5' \
-    > /dev/null
-
-# Add UN1CA Settings SearchIndexDataProvider(s)
-LOG "- Patching \"smali/com/android/settingslib/search/SearchIndexableResourcesBase.smali\" in /system/system/priv-app/SecSettings.apk"
-SMALI_PATCH "system" "system/priv-app/SecSettings/SecSettings.apk" \
-    "smali/com/android/settingslib/search/SearchIndexableResourcesBase.smali" "replace" \
-    '<init>()V' \
-    'return-void' \
-    '    new-instance v0, Lcom/android/settingslib/search/SearchIndexableData;\n\n    return-void' \
-    > /dev/null
-SMALI_PATCH "system" "system/priv-app/SecSettings/SecSettings.apk" \
-    "smali/com/android/settingslib/search/SearchIndexableResourcesBase.smali" "replace" \
-    '<init>()V' \
-    'return-void' \
-    '    const-class v1, Lio/mesalabs/unica/settings/UnicaSettingsFragment;\n\n    return-void' \
-    > /dev/null
-SMALI_PATCH "system" "system/priv-app/SecSettings/SecSettings.apk" \
-    "smali/com/android/settingslib/search/SearchIndexableResourcesBase.smali" "replace" \
-    '<init>()V' \
-    'return-void' \
-    '    sget-object v2, Lio/mesalabs/unica/settings/UnicaSettingsFragment;->SEARCH_INDEX_DATA_PROVIDER:Lcom/android/settings/search/BaseSearchIndexProvider;\n\n    return-void' \
-    > /dev/null
-SMALI_PATCH "system" "system/priv-app/SecSettings/SecSettings.apk" \
-    "smali/com/android/settingslib/search/SearchIndexableResourcesBase.smali" "replace" \
-    '<init>()V' \
-    'return-void' \
-    '    invoke-direct {v0, v1, v2}, Lcom/android/settingslib/search/SearchIndexableData;-><init>(Ljava/lang/Class;Lcom/android/settingslib/search/Indexable$SearchIndexProvider;)V\n\n    return-void' \
-    > /dev/null
-SMALI_PATCH "system" "system/priv-app/SecSettings/SecSettings.apk" \
-    "smali/com/android/settingslib/search/SearchIndexableResourcesBase.smali" "replace" \
-    '<init>()V' \
-    'return-void' \
-    '    invoke-virtual {p0, v0}, Lcom/android/settingslib/search/SearchIndexableResourcesBase;->addIndex(Lcom/android/settingslib/search/SearchIndexableData;)V\n\n    return-void' \
-    > /dev/null
-SMALI_PATCH "system" "system/priv-app/SecSettings/SecSettings.apk" \
-    "smali/com/android/settingslib/search/SearchIndexableResourcesBase.smali" "replace" \
-    '<init>()V' \
-    'return-void' \
-    '    new-instance v0, Lcom/android/settingslib/search/SearchIndexableData;\n\n    return-void' \
-    > /dev/null
-SMALI_PATCH "system" "system/priv-app/SecSettings/SecSettings.apk" \
-    "smali/com/android/settingslib/search/SearchIndexableResourcesBase.smali" "replace" \
-    '<init>()V' \
-    'return-void' \
-    '    const-class v1, Lio/mesalabs/unica/settings/extra/ExtraSettingsFragment;\n\n    return-void' \
-    > /dev/null
-SMALI_PATCH "system" "system/priv-app/SecSettings/SecSettings.apk" \
-    "smali/com/android/settingslib/search/SearchIndexableResourcesBase.smali" "replace" \
-    '<init>()V' \
-    'return-void' \
-    '    sget-object v2, Lio/mesalabs/unica/settings/extra/ExtraSettingsFragment;->SEARCH_INDEX_DATA_PROVIDER:Lcom/android/settings/search/BaseSearchIndexProvider;\n\n    return-void' \
-    > /dev/null
-SMALI_PATCH "system" "system/priv-app/SecSettings/SecSettings.apk" \
-    "smali/com/android/settingslib/search/SearchIndexableResourcesBase.smali" "replace" \
-    '<init>()V' \
-    'return-void' \
-    '    invoke-direct {v0, v1, v2}, Lcom/android/settingslib/search/SearchIndexableData;-><init>(Ljava/lang/Class;Lcom/android/settingslib/search/Indexable$SearchIndexProvider;)V\n\n    return-void' \
-    > /dev/null
-SMALI_PATCH "system" "system/priv-app/SecSettings/SecSettings.apk" \
-    "smali/com/android/settingslib/search/SearchIndexableResourcesBase.smali" "replace" \
-    '<init>()V' \
-    'return-void' \
-    '    invoke-virtual {p0, v0}, Lcom/android/settingslib/search/SearchIndexableResourcesBase;->addIndex(Lcom/android/settingslib/search/SearchIndexableData;)V\n\n    return-void' \
-    > /dev/null
-SMALI_PATCH "system" "system/priv-app/SecSettings/SecSettings.apk" \
-    "smali/com/android/settingslib/search/SearchIndexableResourcesBase.smali" "replace" \
-    '<init>()V' \
-    'return-void' \
-    '    new-instance v0, Lcom/android/settingslib/search/SearchIndexableData;\n\n    return-void' \
-    > /dev/null
-SMALI_PATCH "system" "system/priv-app/SecSettings/SecSettings.apk" \
-    "smali/com/android/settingslib/search/SearchIndexableResourcesBase.smali" "replace" \
-    '<init>()V' \
-    'return-void' \
-    '    const-class v1, Lio/mesalabs/unica/settings/spoof/SpoofSettingsFragment;\n\n    return-void' \
-    > /dev/null
-SMALI_PATCH "system" "system/priv-app/SecSettings/SecSettings.apk" \
-    "smali/com/android/settingslib/search/SearchIndexableResourcesBase.smali" "replace" \
-    '<init>()V' \
-    'return-void' \
-    '    sget-object v2, Lio/mesalabs/unica/settings/spoof/SpoofSettingsFragment;->SEARCH_INDEX_DATA_PROVIDER:Lcom/android/settings/search/BaseSearchIndexProvider;\n\n    return-void' \
-    > /dev/null
-SMALI_PATCH "system" "system/priv-app/SecSettings/SecSettings.apk" \
-    "smali/com/android/settingslib/search/SearchIndexableResourcesBase.smali" "replace" \
-    '<init>()V' \
-    'return-void' \
-    '    invoke-direct {v0, v1, v2}, Lcom/android/settingslib/search/SearchIndexableData;-><init>(Ljava/lang/Class;Lcom/android/settingslib/search/Indexable$SearchIndexProvider;)V\n\n    return-void' \
-    > /dev/null
-SMALI_PATCH "system" "system/priv-app/SecSettings/SecSettings.apk" \
-    "smali/com/android/settingslib/search/SearchIndexableResourcesBase.smali" "replace" \
-    '<init>()V' \
-    'return-void' \
-    '    invoke-virtual {p0, v0}, Lcom/android/settingslib/search/SearchIndexableResourcesBase;->addIndex(Lcom/android/settingslib/search/SearchIndexableData;)V\n\n    return-void' \
-    > /dev/null
-SMALI_PATCH "system" "system/priv-app/SecSettings/SecSettings.apk" \
-    "smali/com/android/settingslib/search/SearchIndexableResourcesBase.smali" "replace" \
-    '<init>()V' \
-    'return-void' \
-    '    new-instance v0, Lcom/android/settingslib/search/SearchIndexableData;\n\n    return-void' \
-    > /dev/null
-SMALI_PATCH "system" "system/priv-app/SecSettings/SecSettings.apk" \
-    "smali/com/android/settingslib/search/SearchIndexableResourcesBase.smali" "replace" \
-    '<init>()V' \
-    'return-void' \
-    '    const-class v1, Lio/mesalabs/unica/settings/ui/UISettingsFragment;\n\n    return-void' \
-    > /dev/null
-SMALI_PATCH "system" "system/priv-app/SecSettings/SecSettings.apk" \
-    "smali/com/android/settingslib/search/SearchIndexableResourcesBase.smali" "replace" \
-    '<init>()V' \
-    'return-void' \
-    '    sget-object v2, Lio/mesalabs/unica/settings/ui/UISettingsFragment;->SEARCH_INDEX_DATA_PROVIDER:Lcom/android/settings/search/BaseSearchIndexProvider;\n\n    return-void' \
-    > /dev/null
-SMALI_PATCH "system" "system/priv-app/SecSettings/SecSettings.apk" \
-    "smali/com/android/settingslib/search/SearchIndexableResourcesBase.smali" "replace" \
-    '<init>()V' \
-    'return-void' \
-    '    invoke-direct {v0, v1, v2}, Lcom/android/settingslib/search/SearchIndexableData;-><init>(Ljava/lang/Class;Lcom/android/settingslib/search/Indexable$SearchIndexProvider;)V\n\n    return-void' \
-    > /dev/null
-SMALI_PATCH "system" "system/priv-app/SecSettings/SecSettings.apk" \
-    "smali/com/android/settingslib/search/SearchIndexableResourcesBase.smali" "replace" \
-    '<init>()V' \
-    'return-void' \
-    '    invoke-virtual {p0, v0}, Lcom/android/settingslib/search/SearchIndexableResourcesBase;->addIndex(Lcom/android/settingslib/search/SearchIndexableData;)V\n\n    return-void' \
-    > /dev/null
-DECODE_APK "system" "system/priv-app/SecSettingsIntelligence/SecSettingsIntelligence.apk"
-LOG "- Patching \"smali_classes2/com/samsung/android/settings/intelligence/search/categorizing/TopLevelKeysCollector.smali\" in /system/system/priv-app/SecSettingsIntelligence/SecSettingsIntelligence.apk"
-SMALI_PATCH "system" "system/priv-app/SecSettingsIntelligence/SecSettingsIntelligence.apk" \
-    "smali_classes2/com/samsung/android/settings/intelligence/search/categorizing/TopLevelKeysCollector.smali" "replace" \
-    '<init>(Landroid/content/Context;)V' \
-    '.locals 36' \
-    '.locals 37' \
-    > /dev/null
-SMALI_PATCH "system" "system/priv-app/SecSettingsIntelligence/SecSettingsIntelligence.apk" \
-    "smali_classes2/com/samsung/android/settings/intelligence/search/categorizing/TopLevelKeysCollector.smali" "replace" \
-    '<init>(Landroid/content/Context;)V' \
-    'filled-new-array/range {v1 .. v35}, [Ljava/lang/String;' \
-    '    const-string v36, "top_level_unica"\n\n    filled-new-array/range {v1 .. v36}, [Ljava/lang/String;' \
-    > /dev/null
-
-# Show Vulkan renderer toggle if required
-if [[ "$(GET_PROP "ro.hwui.use_vulkan")" != "true" ]]; then
-    SET_PROP "system" "persist.sys.unica.vulkan" "false"
-fi
-
-unset PATCH_INST CONTENT
-
+FTP="
+system/priv-app/SecSettings/SecSettings.apk/smali_classes4/com/samsung/android/settings/deviceinfo/batteryinfo/BatteryRegulatoryPreferenceController.smali
+system/priv-app/SecSettings/SecSettings.apk/smali_classes4/com/samsung/android/settings/deviceinfo/batteryinfo/SecBatteryFirstUseDatePreferenceController.smali
+system/priv-app/SecSettings/SecSettings.apk/smali_classes4/com/samsung/android/settings/deviceinfo/batteryinfo/SecBatteryInfoFragment.smali
+"
+for f in $FTP; do
+    sed -i "s/SM-A236B/$(GET_PROP "system" "ro.product.system.model")/g" "$APKTOOL_DIR/$f"
+done
 LOG_STEP_OUT
+
+LOG_STEP_IN "- Adding Multi-User Support"
+SET_PROP "system" "fw.max_users" "8"
+SET_PROP "system" "fw.show_multiuserui" "1"
+LOG_STEP_OUT
+
+# ro.build.2ndbrand is always "false"
+DECODE_APK "system" "system/framework/services.jar"
+LOG_STEP_IN "- Disabling ASKS"
+sed -i "s/ro.build.official.release/ro.build.2ndbrand/g" "$APKTOOL_DIR/system/framework/services.jar/smali/com/android/server/asks/ASKSManagerService.smali"
+LOG_STEP_OUT
+
+DECODE_APK "system" "system/framework/services.jar"
+
+########### Allow secure screenshot
+LOG_STEP_IN "- Allow secure screenshot"
+SMALI_PATCH "system" "system/framework/services.jar" \
+        "smali_classes2/com/android/server/wm/WindowState.smali" "return" \
+        'isSecureLocked()Z' 'false'
+LOG_STEP_OUT
+
+########### Allow app downgrade
+LOG_STEP_IN "- Allow app downgrade"
+SMALI_PATCH "system" "system/framework/services.jar" \
+        "smali_classes2/com/android/server/pm/PackageManagerServiceUtils.smali" "return" \
+        'isDowngradePermitted(IZ)Z' 'false'
+LOG_STEP_OUT
+
+########### Bypass app target SDK
+LOG_STEP_IN "- Bypass app target SDK"
+FILE="$APKTOOL_DIR/system/framework/services.jar/smali_classes2/com/android/server/pm/InstallPackageHelper.smali"
+
+# Patch the file using sed
+sed -i '/and-int\/2addr v2, v10/,/if-nez v2, :cond_14/c\
+    and-int\/2addr v2, v10\
+    if-eqz v2, :cond_13\
+\
+    const/4 v2, 0x1\
+\
+    goto :goto_d\
+\
+    :cond_13\
+    const/4 v2, 0x1\
+\
+    :goto_d\
+    if-nez v2, :cond_14' "$FILE"
+
+# Verifikasi patch
+if sed -n '/and-int\/2addr v2, v10/,/if-nez v2, :cond_14/p' "$FILE" | grep -q "const/4 v2, 0x1"; then
+    LOG "[SUCCESS] Bypass app target SDK patched successfully!"
+else
+    LOGE "[FAIL] Bypass app target SDK patch failed!"
+    exit 1
+fi
+LOG_STEP_OUT
+
+########### Set auto confirm PIN min digits to 4
+LOG_STEP_IN "- Set auto confirm PIN min digits to 4"
+SMALI_PATCH "system" "system/framework/services.jar" \
+    "smali/com/android/server/locksettings/SyntheticPasswordManager.smali" "replace" \
+    'createLskfBasedProtector(Landroid/service/gatekeeper/IGateKeeperService;Lcom/android/internal/widget/LockscreenCredential;JLcom/android/internal/widget/LockscreenCredential;Lcom/android/server/locksettings/SyntheticPasswordManager$SyntheticPassword;I)J' \
+    'const/4 v9, 0x6' \
+    'const/4 v9, 0x4'
+LOG_STEP_OUT
+
+########### Allow Zipped Overlay APKs
+#LOG_STEP_IN "- Allow Zipped Overlay APKs"
+#FILE="$APKTOOL_DIR/system/framework/services.jar/smali_classes2/com/android/server/pm/InstallPackageHelper.smali"
+
+#sed -i '/invoke-virtual {v3, v6}, Ljava\/lang\/String;->startsWith(Ljava\/lang\/String;)Z/,/if-eqz v0, :cond_c/c\
+#    invoke-virtual {v3, v6}, Ljava/lang/String;->startsWith(Ljava/lang/String;)Z\
+#\
+#    move-result v3\
+#\
+#    goto :cond_d\
+#\
+#    if-eqz v0, :cond_c' "$FILE"
+
+# Verifikasi
+#if grep -q "goto :cond_d" "$FILE"; then
+#    LOG "[SUCCESS] Allow Zipped Overlay APKs patched successfully!"
+#else
+#    LOGE "[FAIL] Allow Zipped Overlay APKs patch failed!"
+#    exit 1
+#fi
+
+#LOG_STEP_OUT
+
+DECODE_APK "system" "system/priv-app/SecSettings/SecSettings.apk"
+
+########### Enable Outdoor mode support
+LOG_STEP_IN "- Enable Outdoor mode support"
+SMALI_PATCH "system" "system/priv-app/SecSettings/SecSettings.apk" \
+        "smali_classes4/com/samsung/android/settings/display/controller/SecOutDoorModePreferenceController.smali" "return" \
+        'isAvailable()Z' 'true'
+LOG_STEP_OUT
+
+########### Set auto confirm PIN min digits to 4
+LOG_STEP_IN "- Set auto confirm PIN min digits to 4"
+SMALI_PATCH "system" "system/priv-app/SecSettings/SecSettings.apk" \
+    "smali_classes2/com/android/settings/password/ChooseLockPassword\$ChooseLockPasswordFragment.smali" "replace" \
+    'handleNext$2()V' \
+    'const/4 v4, 0x6' \
+    'const/4 v4, 0x4'
+
+SMALI_PATCH "system" "system/priv-app/SecSettings/SecSettings.apk" \
+    "smali_classes2/com/android/settings/password/ChooseLockPassword\$ChooseLockPasswordFragment.smali" "replace" \
+    'setAutoPinConfirmOption(IZ)V' \
+    'const/4 p2, 0x6' \
+    'const/4 p2, 0x4'
+LOG_STEP_OUT
+
+########### Enable gestures by default
+LOG_STEP_IN "- Enable gestures by default"
+SMALI_PATCH "system" "system/priv-app/SecSettings/SecSettings.apk" \
+        "smali_classes4/com/samsung/android/settings/navigationbar/NavigationBarSettingsUtil.smali" "return" \
+        'isGestureDefault()Z' 'true'
+LOG_STEP_OUT
+

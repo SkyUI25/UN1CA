@@ -1,0 +1,25 @@
+From cdaa2133898a17de0b8d0af9f0cfa2c0386d45d5 Mon Sep 17 00:00:00 2001
+From: SkyUI-Dev <skyui2625@gmail.com>
+Date: Sun, 8 Feb 2026 17:46:51 +0700
+Subject: [PATCH] Force AppLock support
+
+---
+ smali_classes6/com/samsung/android/rune/CoreRune.smali | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/smali_classes6/com/samsung/android/rune/CoreRune.smali b/smali_classes6/com/samsung/android/rune/CoreRune.smali
+index dd92d16..8705dc0 100644
+--- a/smali_classes6/com/samsung/android/rune/CoreRune.smali
++++ b/smali_classes6/com/samsung/android/rune/CoreRune.smali
+@@ -3378,6 +3378,8 @@
+     invoke-virtual {v0, v8}, Ljava/lang/String;->equals(Ljava/lang/Object;)Z
+ 
+     move-result v0
++	
++	const/4 v0, 0x1
+ 
+     sput-boolean v0, Lcom/samsung/android/rune/CoreRune;->FW_SUPPORT_APPLOCK:Z
+ 
+-- 
+2.43.0
+

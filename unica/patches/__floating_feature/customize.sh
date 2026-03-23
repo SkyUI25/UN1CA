@@ -127,10 +127,10 @@ SEC_FLOATING_FEATURE_SAIV_CONFIG_ARDOODLE_LIB=IMG_PICKING
 # [
 APPLY_TARGET_FEATURE()
 {
-    local TARGET_FIRMWARE_PATH="$(cut -d "/" -f 1 -s <<< "$TARGET_FIRMWARE")_$(cut -d "/" -f 2 -s <<< "$TARGET_FIRMWARE")"
+#    local TARGET_FIRMWARE_PATH="$(cut -d "/" -f 1 -s <<< "$TARGET_FIRMWARE")_$(cut -d "/" -f 2 -s <<< "$TARGET_FIRMWARE")"
 
     local SOURCE_FILE="$WORK_DIR/system/system/etc/floating_feature.xml"
-    local TARGET_FILE="$FW_DIR/$TARGET_FIRMWARE_PATH/system/system/etc/floating_feature.xml"
+    local TARGET_FILE="$FW_DIR/$TARGET_FIRMWARE_PATH/ROM/system/system/etc/floating_feature.xml"
 
     local FEATURE
     local SOURCE_VALUE
@@ -208,9 +208,9 @@ APPLY_CUSTOM_FEATURE()
 }
 # ]
 
-LOG_STEP_IN "- Applying target floating feature config"
-APPLY_TARGET_FEATURE
-LOG_STEP_OUT
+#LOG_STEP_IN "- Applying target floating feature config"
+#APPLY_TARGET_FEATURE
+#LOG_STEP_OUT
 
 if [ -f "$SRC_DIR/platform/$TARGET_PLATFORM/sff.sh" ]; then
     LOG_STEP_IN "- Applying custom platform floating feature config"

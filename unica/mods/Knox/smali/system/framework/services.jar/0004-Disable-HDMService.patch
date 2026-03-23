@@ -1,0 +1,33 @@
+From 98d3d623c8c6331ab39d70efb449b67b55e912b2 Mon Sep 17 00:00:00 2001
+From: SkyUI-Dev <skyui2625@gmail.com>
+Date: Sat, 21 Feb 2026 18:59:48 +0700
+Subject: [PATCH] Disable HDMService
+
+---
+ .../EnterpriseDeviceManagerServiceImpl.smali           | 10 ----------
+ 1 file changed, 10 deletions(-)
+
+diff --git a/smali/com/android/server/enterprise/EnterpriseDeviceManagerServiceImpl.smali b/smali/com/android/server/enterprise/EnterpriseDeviceManagerServiceImpl.smali
+index 5699fcd..b86f51e 100644
+--- a/smali/com/android/server/enterprise/EnterpriseDeviceManagerServiceImpl.smali
++++ b/smali/com/android/server/enterprise/EnterpriseDeviceManagerServiceImpl.smali
+@@ -2121,16 +2121,6 @@
+ 
+     invoke-static {v1, p1}, Landroid/os/ServiceManager;->addService(Ljava/lang/String;Landroid/os/IBinder;)V
+ 
+-    new-instance p1, Lcom/android/server/enterprise/hdm/HdmService;
+-
+-    iget-object v0, v0, Lcom/android/server/enterprise/EnterpriseDeviceManagerServiceImpl$Injector;->mContext:Landroid/content/Context;
+-
+-    invoke-direct {p1, v0}, Lcom/android/server/enterprise/hdm/HdmService;-><init>(Landroid/content/Context;)V
+-
+-    const-string/jumbo v0, "hdm_service"
+-
+-    invoke-static {p1, v0}, Lcom/android/server/enterprise/EnterpriseDeviceManagerServiceImpl$Injector;->addLazySystemService(Lcom/android/server/enterprise/EnterpriseServiceCallback;Ljava/lang/String;)V
+-
+     iget-object p1, p0, Lcom/android/server/enterprise/EnterpriseDeviceManagerServiceImpl;->mContext:Landroid/content/Context;
+ 
+     sget v0, Lcom/android/server/enterprise/appconfig/ApplicationRestrictionsService;->$r8$clinit:I
+-- 
+2.43.0
+

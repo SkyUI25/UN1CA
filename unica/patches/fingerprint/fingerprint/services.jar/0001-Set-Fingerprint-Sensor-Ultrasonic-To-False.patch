@@ -1,0 +1,34 @@
+From 06a65529fd995e9ed41e6eb67810b11f82e72adc Mon Sep 17 00:00:00 2001
+From: SkyUI-Dev <skyui2625@gmail.com>
+Date: Sat, 21 Feb 2026 19:38:36 +0700
+Subject: [PATCH] Set Fingerprint Sensor Ultrasonic To False
+
+---
+ smali/com/android/server/biometrics/SemBiometricFeature.smali | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/smali/com/android/server/biometrics/SemBiometricFeature.smali b/smali/com/android/server/biometrics/SemBiometricFeature.smali
+index 356de83..6c409df 100644
+--- a/smali/com/android/server/biometrics/SemBiometricFeature.smali
++++ b/smali/com/android/server/biometrics/SemBiometricFeature.smali
+@@ -159,7 +159,7 @@
+ 
+     sput-boolean v0, Lcom/android/server/biometrics/SemBiometricFeature;->FP_FEATURE_USE_AOSP_HAL:Z
+ 
+-    sput-boolean v2, Lcom/android/server/biometrics/SemBiometricFeature;->FP_FEATURE_SENSOR_IS_IN_DISPLAY_TYPE:Z
++    sput-boolean v3, Lcom/android/server/biometrics/SemBiometricFeature;->FP_FEATURE_SENSOR_IS_IN_DISPLAY_TYPE:Z
+ 
+     invoke-static {}, Lcom/samsung/android/feature/SemFloatingFeature;->getInstance()Lcom/samsung/android/feature/SemFloatingFeature;
+ 
+@@ -179,7 +179,7 @@
+ 
+     sput-boolean v0, Lcom/android/server/biometrics/SemBiometricFeature;->FP_FEATURE_SENSOR_IS_OPTICAL:Z
+ 
+-    sput-boolean v2, Lcom/android/server/biometrics/SemBiometricFeature;->FP_FEATURE_SENSOR_IS_ULTRASONIC:Z
++    sput-boolean v3, Lcom/android/server/biometrics/SemBiometricFeature;->FP_FEATURE_SENSOR_IS_ULTRASONIC:Z
+ 
+     invoke-static {}, Lcom/samsung/android/feature/SemFloatingFeature;->getInstance()Lcom/samsung/android/feature/SemFloatingFeature;
+ 
+-- 
+2.43.0
+

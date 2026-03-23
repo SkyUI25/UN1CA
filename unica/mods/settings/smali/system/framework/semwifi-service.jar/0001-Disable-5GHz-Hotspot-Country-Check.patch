@@ -1,0 +1,79 @@
+From 00ef6dcb8d08210feae57b8d8df29d48b93f4dfd Mon Sep 17 00:00:00 2001
+From: SkyUI-Dev <skyui2625@gmail.com>
+Date: Mon, 9 Feb 2026 11:00:08 +0700
+Subject: [PATCH] Disable 5GHz Hotspot Country Check
+
+---
+ .../server/wifi/ap/SemWifiApServiceImpl.smali | 34 +++++++++----------
+ 1 file changed, 17 insertions(+), 17 deletions(-)
+
+diff --git a/smali/com/samsung/android/server/wifi/ap/SemWifiApServiceImpl.smali b/smali/com/samsung/android/server/wifi/ap/SemWifiApServiceImpl.smali
+index 4f23dda..5345ad5 100644
+--- a/smali/com/samsung/android/server/wifi/ap/SemWifiApServiceImpl.smali
++++ b/smali/com/samsung/android/server/wifi/ap/SemWifiApServiceImpl.smali
+@@ -7371,23 +7371,23 @@
+ 
+     if-ge v7, v6, :cond_2
+ 
+-    const-string v15, "IR"
++    const-string v15, "XY"
+ 
+-    const-string v16, "SD"
++    const-string v16, "XY"
+ 
+-    const-string v8, "BO"
++    const-string v8, "XY"
+ 
+-    const-string v9, "QA"
++    const-string v9, "XY"
+ 
+-    const-string v10, "KZ"
++    const-string v10, "XY"
+ 
+-    const-string v11, "RU"
++    const-string v11, "XY"
+ 
+-    const-string v12, "KP"
++    const-string v12, "XY"
+ 
+-    const-string v13, "SY"
++    const-string v13, "XY"
+ 
+-    const-string v14, "CU"
++    const-string v14, "XY"
+ 
+     filled-new-array/range {v8 .. v16}, [Ljava/lang/String;
+ 
+@@ -7398,21 +7398,21 @@
+     goto :goto_0
+ 
+     :cond_2
+-    const-string v13, "IR"
++    const-string v13, "XY"
+ 
+-    const-string v14, "SD"
++    const-string v14, "XY"
+ 
+-    const-string v7, "QA"
++    const-string v7, "XY"
+ 
+-    const-string v8, "KZ"
++    const-string v8, "XY"
+ 
+-    const-string v9, "RU"
++    const-string v9, "XY"
+ 
+-    const-string v10, "KP"
++    const-string v10, "XY"
+ 
+-    const-string v11, "SY"
++    const-string v11, "XY"
+ 
+-    const-string v12, "CU"
++    const-string v12, "XY"
+ 
+     filled-new-array/range {v7 .. v14}, [Ljava/lang/String;
+ 
+-- 
+2.43.0
+

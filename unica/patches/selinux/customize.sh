@@ -70,12 +70,15 @@ for e in $ENTRIES; do
             LOG "- \"$e\" SELinux entry not supported. Removing"
             sed -i "/($e)/d" "$WORK_DIR/$(GET_SYSTEM_EXT)/etc/selinux/mapping/$CIL_NAME.cil"
             for a in $VENDOR_API_LIST; do
+			    LOG "- \"$e\" Processing $(VENDOR_API_LIST)"
                 sed -i "/${e}_${a}/d" "$WORK_DIR/$(GET_SYSTEM_EXT)/etc/selinux/mapping/$CIL_NAME.cil"
             done
             if grep -q "genfscon.*$e" "$WORK_DIR/$(GET_SYSTEM_EXT)/etc/selinux/system_ext_sepolicy.cil"; then
+			    LOG "- \"$e\" Processing genfscon"
                 sed -i "/genfscon.*$e/d" "$WORK_DIR/$(GET_SYSTEM_EXT)/etc/selinux/system_ext_sepolicy.cil"
             fi
             if grep -q "genfscon.*$e" "$WORK_DIR/system/system/etc/selinux/plat_sepolicy.cil"; then
+			    LOG "- \"$e\" Processing genfscon"
                 sed -i "/genfscon.*$e/d" "$WORK_DIR/system/system/etc/selinux/plat_sepolicy.cil"
             fi
         fi

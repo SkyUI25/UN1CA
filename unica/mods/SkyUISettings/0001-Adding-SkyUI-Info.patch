@@ -1,0 +1,24 @@
+From c5b2239f32cf84f0608792204f2d0661e507f02a Mon Sep 17 00:00:00 2001
+From: SkyUI-Dev <skyui2625@gmail.com>
+Date: Fri, 13 Feb 2026 14:38:11 +0700
+Subject: [PATCH] Adding SkyUI Info
+
+---
+ res/xml/sec_software_info_settings.xml | 1 ++
+ 1 file changed, 1 insertions(+)
+
+diff --git a/res/xml/sec_software_info_settings.xml b/res/xml/sec_software_info_settings.xml
+index b85d60e..f9a7c1b 100644
+--- a/res/xml/sec_software_info_settings.xml
++++ b/res/xml/sec_software_info_settings.xml
+@@ -1,6 +1,7 @@
+ <?xml version="1.0" encoding="utf-8"?>
+ <PreferenceScreen android:title="@string/device_info_software_title" settings:hierarchicalParentFragment="com.samsung.android.settings.deviceinfo.aboutphone.SecMyDeviceInfoFragment" settings:topLevelPreferenceKey="top_level_about_phone"
+   xmlns:android="http://schemas.android.com/apk/res/android" xmlns:settings="http://schemas.android.com/apk/res-auto">
++    <Preference android:enabled="false" android:title="SkyUI Version" android:key="skyui_version" android:summary="@string/summary_placeholder" android:shouldDisableView="false" settings:controller="com.samsung.android.settings.deviceinfo.softwareinfo.SkyUIVersionPreferenceController" />
+     <Preference android:enabled="false" android:title="@string/one_ui_version_title" android:key="one_ui_version" android:summary="@string/summary_placeholder" android:shouldDisableView="false" settings:controller="com.samsung.android.settings.deviceinfo.softwareinfo.OneUIVersionPreferenceController" />
+     <Preference android:title="@string/firmware_version" android:key="android_firmware_version" android:summary="@string/summary_placeholder" settings:controller="com.android.settings.deviceinfo.firmwareversion.FirmwareVersionDetailPreferenceController" />
+     <Preference android:title="@string/module_version" android:key="module_version" android:summary="@string/summary_placeholder" settings:controller="com.android.settings.deviceinfo.firmwareversion.MainlineModuleVersionPreferenceController" />
+-- 
+2.43.0
+
