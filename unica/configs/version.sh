@@ -1,7 +1,7 @@
 # Copyright (c) 2025 Salvo Giangreco
 # SPDX-License-Identifier: GPL-3.0-or-later
 # ROM VERSION
-DEVICE_MODEL=$(GET_PROP "$FW_DIR/$SOURCE_FIRMWARE_PATH/ROM/system/system/build.prop" "ro.product.system.model")
+DEVICE_MODEL=$(GET_PROP "$FW_DIR/$SOURCE_FIRMWARE_PATH/system/system/build.prop" "ro.product.system.model")
 
 case "$DEVICE_MODEL" in
     SM-S*)
@@ -16,7 +16,7 @@ case "$DEVICE_MODEL" in
 esac
 
 # MAJOR VERSION
-SDK_VERSION=$(GET_PROP "$FW_DIR/$SOURCE_FIRMWARE_PATH/ROM/system/system/build.prop" "ro.system.build.version.sdk")
+SDK_VERSION=$(GET_PROP "$FW_DIR/$SOURCE_FIRMWARE_PATH/system/system/build.prop" "ro.system.build.version.sdk")
 
 case "$SDK_VERSION" in
     35)
