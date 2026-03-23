@@ -1,0 +1,69 @@
+{
+    "deviceName": "default_lowtier",    
+
+    "HumanAwareEngine": {
+        "Perf_mode_preview": "PERFMODE_LOW",
+        "Perf_mode_capture": "PERFMODE_LOW",
+        "Perf_mode_SDK": "PERFMODE_LOW",
+        "bloom_ev_tuning": "false"
+    },
+
+    "BeautyEngine": {
+        "mode_preview": "BEAUTY_SINGLEBLUR_PREVIEW",
+        "mode_capture": "BEAUTY_SINGLEBLUR_CAPTURE"
+    },
+
+    "RelightingEngine": {
+        "mode_preview": "v2",
+        "mode_capture": "v2",
+        "loc_preview": "vendor",
+        "loc_capture": "vendor"
+    },
+
+    "LD_FD_engine": {
+        "mode_preview": "default",
+        "mode_capture": "default"
+    },
+    
+    "capture_segmentation": {
+        "Weightfile": "/system/cameradata/portrait_data/SRIB_Acenet_FP16_V008.snf",
+        "Version": "008",
+        "ComputeUnit": "COMPUTE_GPU",
+        "ExecutionDataType": "FLOAT16",
+        "ModelType": "MODEL_TYPE_OBJ_INSTANCE_CAPTURE",
+        "ModelFormat": "SNF",
+        "Encryption": "false",
+        "input_size": [[416, 416], [416, 416], [416, 416], [416, 416]]
+    },
+   "capture_depth": {
+        "Weightfile": null,
+        "Version": null,
+        "ComputeUnit": null,
+        "ExecutionDataType": null,
+        "ModelType": null,
+        "ModelFormat": null,
+        "Encryption": null,
+        "input_size": null
+    },
+    "capture_matting": {
+        "Weightfile": null,
+        "Version": null,
+        "ComputeUnit": null,
+        "ExecutionDataType": null,
+        "ModelType": null,
+        "ModelFormat": null,
+        "Encryption": null,
+        "input_size": null
+    },
+    "preview_1st_segmentation": {
+        "Weightfile": "/system/cameradata/portrait_data/SRIB_HumanSegLite_INT8_V004.snf",
+        "Version": "004",
+        "ComputeUnit": "COMPUTE_GPU",
+        "ExecutionDataType": "QASYMM8",
+        "ModelType": "MODEL_TYPE_SEG_LIVE",
+        "ModelFormat": "SNF",
+        "Encryption": "false",
+        "input_size": [[224, 224], [224, 224], [224, 224], [224, 224]],
+        "effects_supported": [0, 1, 2, 6, 10, 11, 12, 13, 14, 15]
+    }
+}
