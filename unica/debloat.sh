@@ -26,6 +26,7 @@ system/etc/init/ssu_$(GET_PROP "system" "ro.product.system.name").rc
 system/etc/init/ssu.rc
 system/etc/permissions/privapp-permissions-com.samsung.ssu.xml
 system/etc/sysconfig/samsungsimunlock.xml
+system/lib64/vendor.samsung.hardware.security.ssu-V1-ndk.so
 system/lib64/android.security.securekeygeneration-ndk.so
 system/lib64/libssu_keystore2.so
 system/priv-app/SsuService
@@ -38,11 +39,6 @@ bin/install-recovery.sh
 etc/init/vendor_flash_recovery.rc
 "
 
-# PDP apps
-SYSTEM_DEBLOAT+="
-system/preload
-"
-
 truncate -s 0 "$WORK_DIR/system/system/etc/vpl_apks_count_list.txt"
 
 # eSIM
@@ -53,6 +49,7 @@ system/etc/sysconfig/preinstalled-packages-com.samsung.android.app.esimkeystring
 system/etc/sysconfig/preinstalled-packages-com.samsung.euicc.xml
 system/priv-app/EsimKeyString
 system/priv-app/EuiccService
+system/priv-app/EsimClient
 "
 
 # SmartFPSAdjuster
@@ -83,10 +80,6 @@ system/etc/permissions/privapp-permissions-com.samsung.android.game.gamehome.xml
 system/priv-app/GameHome
 "
 
-ADD_TO_WORK_DIR "pa2qxxx" "system" \
-    "system/etc/permissions/signature-permissions-com.samsung.android.game.gamehome.xml" \
-    0 0 644 "u:object_r:system_file:s0"
-
 # Gemini shortcut
 PRODUCT_DEBLOAT+="
 app/BardShell
@@ -110,6 +103,7 @@ app/Chrome
 # Google Duo
 PRODUCT_DEBLOAT+="
 app/DuoStub
+app/Duo
 "
 
 # Google Maps
@@ -187,11 +181,12 @@ system/etc/permissions/privapp-permissions-com.samsung.android.dqagent.xml
 system/etc/permissions/privapp-permissions-com.sec.android.diagmonagent.xml
 system/etc/permissions/privapp-permissions-com.sec.android.soagent.xml
 system/priv-app/DeviceQualityAgent36
+system/priv-app/DeviceQualityAgent35
 system/priv-app/DiagMonAgent95
+system/priv-app/DiagMonAgent94
 system/priv-app/SOAgent76
+system/priv-app/SOAgent75
 "
-
-SET_FLOATING_FEATURE_CONFIG "SEC_FLOATING_FEATURE_CONTEXTSERVICE_ENABLE_SURVEY_MODE" --delete
 
 # Samsung AR Emoji
 SYSTEM_DEBLOAT+="
@@ -222,13 +217,6 @@ system/app/MinusOnePage
 SYSTEM_DEBLOAT+="
 system/etc/permissions/signature-permissions-com.samsung.android.offline.languagemodel.xml
 system/priv-app/OfflineLanguageModel_stub
-"
-
-# Samsung Messages
-SYSTEM_DEBLOAT+="
-system/etc/default-permissions/default-permissions-com.samsung.android.messaging.xml
-system/etc/permissions/privapp-permissions-com.samsung.android.messaging.xml
-system/priv-app/SamsungMessages
 "
 
 # Samsung Pass
@@ -274,9 +262,11 @@ system/priv-app/DigitalKey
 system/priv-app/PaymentFramework
 system/priv-app/SamsungCarKeyFw
 "
-SYSTEM_EXT_DEBLOAT+="
-framework/org.carconnectivity.android.digitalkey.rangingintent.jar
-framework/org.carconnectivity.android.digitalkey.secureelement.jar
+
+# System Ext Debloat
+SYSTEM_DEBLOAT+="
+system/system_ext/framework/org.carconnectivity.android.digitalkey.rangingintent.jar
+system/system_ext/framework/org.carconnectivity.android.digitalkey.secureelement.jar
 "
 
 # Search engine selector
@@ -303,8 +293,6 @@ system/priv-app/SmartTouchCall
 SYSTEM_DEBLOAT+="
 system/hidden/SmartTutor
 "
-
-SET_FLOATING_FEATURE_CONFIG "SEC_FLOATING_FEATURE_COMMON_CONFIG_SMARTTUTOR_PACKAGES_PATH" --delete
 
 # Software update
 SYSTEM_DEBLOAT+="
