@@ -43,6 +43,8 @@ VERSION_PATCH=01
 # Version name
 SKYUI_VERSION="${ROM_NAME}-${ROM_VERSION}.${VERSION_MAJOR}.${VERSION_PATCH}"
 MAJOR_PATCH="${VERSION_MAJOR}0${VERSION_MINOR}${VERSION_PATCH}"# Append "+" to version name if commits have been added since the last tag
+
+# Append "+" to version name if commits have been added since the last tag
 LATEST_TAG="$(git describe --tags --abbrev=0 2> /dev/null)"
 if [ "$LATEST_TAG" ]; then
     if [[ "$(git rev-list --count "$LATEST_TAG...HEAD" 2> /dev/null)" =~ 0*[1-9][0-9]* ]]; then
