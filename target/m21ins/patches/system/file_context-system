@@ -1,0 +1,5 @@
+/system/etc/ev_lux_map_config\.xml u:object_r:system_file:s0
+/system/permissions/privapp-permissions-com.samsung.adaptivebrightnessgo.cameralightsensor\.xml u:object_r:system_file:s0
+/system/priv-app/CameraLightSensor u:object_r:system_file:s0
+/system/priv-app/CameraLightSensor/CameraLightSensor\.apk u:object_r:system_file:s0
+

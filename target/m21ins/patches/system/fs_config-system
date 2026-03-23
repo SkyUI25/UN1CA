@@ -1,0 +1,4 @@
+system/etc/ev_lux_map_config.xml 0 0 644 capabilities=0x0
+system/permissions/privapp-permissions-com.samsung.adaptivebrightnessgo.cameralightsensor.xml 0 0 644 capabilities=0x0
+system/priv-app/CameraLightSensor 0 0 755 capabilities=0x0
+system/priv-app/CameraLightSensor/CameraLightSensor.apk 0 0 644 capabilities=0x0

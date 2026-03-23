@@ -1,0 +1,85 @@
+#
+# Copyright (C) 2025 Salvo Giangreco
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#
+
+# SEC Floating Feature configuration file for Galaxy S21 FE 5G (Exynos) (r9s)
+
+# Enable extra brightness feature
+SEC_FLOATING_FEATURE_LCD_SUPPORT_EXTRA_BRIGHTNESS=TRUE
+
+# Camera
+SEC_FLOATING_FEATURE_CAMERA_CONFIG_CAMID_UW=2
+SEC_FLOATING_FEATURE_CAMERA_CONFIG_CAMID_WIDE=0
+SEC_FLOATING_FEATURE_CAMERA_CONFIG_CAMID_TELE_STANDARD_CROP=-1
+SEC_FLOATING_FEATURE_CAMERA_CONFIG_VENDOR_LIB_INFO=beauty.samsung.v4,face_landmark.arcsoft.v2_1,single_bokeh.samsung.v2,facial_attribute.samsung.v1,food.samsung.v1,event_detection.samsung.v2,selfie_correction.samsung.v1,swuwdc.arcsoft.v1,mfhdr.arcsoft.v1,llhdr.arcsoft.v1,hifills.mpi.v1,human_tracking_face.arcsoft.v2_1,smart_scan.samsung.v2,dual_bokeh.samsung.v1,scene_detection.samsung.v1,localtm.samsung.v1_1,image_codec.samsung.v1
+
+# AOD
+SEC_FLOATING_FEATURE_FRAMEWORK_CONFIG_AOD_ITEM=aodversion=7,clocktransition,coverboldfont
+
+# Eye Comfort Disable Adaptive Mode
+SEC_FLOATING_FEATURE_LCD_SUPPORT_BLUE_FILTER_ADAPTIVE_MODE=0
+
+# Face Unlock Animation
+SEC_FLOATING_FEATURE_LOCKSCREEN_CONFIG_PUNCHHOLE_VI=face,pos:0.5:0.031,size:0.216:0.2,type:infinity-ucut
+
+SEC_FLOATING_FEATURE_SYSTEM_CONFIG_SIOP_POLICY_FILENAME=siop_m21_exynos9611
+SEC_FLOATING_FEATURE_COMMON_SUPPORT_SAMSUNG_MARKETING_INFO=FALSE
+SEC_FLOATING_FEATURE_FRAMEWORK_SUPPORT_SCREEN_CAPTURE_ADVANCED_EDIT_VI=TRUE
+SEC_FLOATING_FEATURE_WEATHER_SUPPORT_DETAIL_CITY_VIEW=TRUE
+
+SEC_FLOATING_FEATURE_LCD_CONFIG_CONTROL_AUTO_BRIGHTNESS=3
+
+# HFR MODE
+SEC_FLOATING_FEATURE_LCD_CONFIG_HFR_DEFAULT_REFRESH_RATE=60
+SEC_FLOATING_FEATURE_LCD_CONFIG_HFR_MODE=0
+SEC_FLOATING_FEATURE_LCD_CONFIG_HFR_SUPPORTED_REFRESH_RATE=60
+
+# Fingerprint Type
+SEC_FLOATING_FEATURE_BIOAUTH_CONFIG_FINGERPRINT_FEATURES=capacitive_powerkey_phone
+
+# Charging
+SEC_FLOATING_FEATURE_SETTINGS_CONFIG_ELECTRIC_RATED_VALUE=DC 9 V; 1.67 A
+
+# Delete Wireless Charging
+SEC_FLOATING_FEATURE_BATTERY_SUPPORT_WIRELESS_HV=
+SEC_FLOATING_FEATURE_BATTERY_SUPPORT_WIRELESS_NIGHT_MODE=
+SEC_FLOATING_FEATURE_BATTERY_SUPPORT_WIRELESS_TX=
+
+# Delete SMARTTUTOR
+SEC_FLOATING_FEATURE_COMMON_CONFIG_SMARTTUTOR_PACKAGES_PATH=
+
+# Delete SURVEY MODE
+SEC_FLOATING_FEATURE_CONTEXTSERVICE_ENABLE_SURVEY_MODE=
+
+# Delete BlockChain Service
+SEC_FLOATING_FEATURE_FRAMEWORK_SUPPORT_BLOCKCHAIN_SERVICE=
+
+# Delete Live Effect Gallery
+SEC_FLOATING_FEATURE_SAIV_SUPPORT_3DPHOTO=
+
+# HighEnd Animation
+SEC_FLOATING_FEATURE_LAUNCHER_CONFIG_ANIMATION_TYPE=HighEnd
+
+# Font Size
+SEC_FLOATING_FEATURE_SETTINGS_CONFIG_DEFAULT_FONT_SIZE=2
+
+SEC_FLOATING_FEATURE_SYSTEM_SUPPORT_ENHANCED_CPU_RESPONSIVENESS=TRUE
+SEC_FLOATING_FEATURE_SYSTEM_SUPPORT_ENHANCED_PROCESSING=TRUE
+SEC_FLOATING_FEATURE_COMMON_SUPPORT_HIGH_PERFORMANCE_MODE=TRUE
+SEC_FLOATING_FEATURE_FRAMEWORK_SUPPORT_SMOOTH_SCROLL=TRUE
+
+
+
